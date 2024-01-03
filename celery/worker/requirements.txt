@@ -1,0 +1,6 @@
+modal-client
+Pillow
+celery
+requests
+openai==0.28
+supabase

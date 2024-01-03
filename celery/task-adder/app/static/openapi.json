@@ -1,0 +1,168 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "Commerce Copilot API",
+      "version": "1.0.0",
+      "description": "This API allows users to create stunning product shots of inputted product images. It accepts an input image in base64 format and a textual prompt. The system then generates product images based on the provided input image and prompt. Users can specify the number of images to be generated, and an optional webhook URL can be provided for notifications."
+    },
+    "tags": [
+      {
+        "name": "Generate"
+      }
+    ],
+    "paths": {
+      "/createTask": {
+        "post": {
+          "tags": ["Generate"],
+          "summary": "Create a task with the specified details",
+          "description": "Accepts a product image URL, a descriptive prompt, and the quantity of product images to generate. Generates a task ID that can be used for result retrieval or polling at a later time. If the optional webhook URL is provided, the response will be directly transmitted upon image generation. The input image can be transparent or non-transparent, if non-transparent Background removal is done internally as a preprocessing step to get the main subject in the image",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "image": {
+                      "type": "string",
+                      "default": "https://ik.imagekit.io/lkrvcrvnx/black_shoe.png?tr=orig-true",
+                      "description": "The URL of the product image. (Provide the URL of the product image you want to use for generating the shots.)"
+                    },
+                    "prompt": {
+                      "type": "string",
+                      "default": "A Shoe on a rock, surrounded by moss",
+                      "description": "A descriptive text representing the background idea. (Write a short description of the scene you want the product to be placed in.)"
+                    },
+                    "num_images": {
+                      "type": "integer",
+                      "default": 1,
+                      "description": "The number of images to generate. (Specify the number of shots you want to create, minimum 1 and maximum 4 per request.)"
+                    },
+                    "webhook_url": {
+                      "type": "string",
+                      "default": "https://eop3uoo04dbix18.m.pipedream.net",
+                      "description": "The URL for webhook notifications. (If you want to receive notifications, provide the URL here. This is optional.)"
+                    }
+                  },
+                  "example": {
+                    "image": "https://ik.imagekit.io/lkrvcrvnx/black_shoe.png?tr=orig-true",
+                    "prompt": "A Shoe on a rock, surrounded by moss",
+                    "num_images": 1,
+                    "webhook_url": "https://eop3uoo04dbix18.m.pipedream.net"
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "message": {
+                        "type": "string",
+                        "description": "A message confirming the successful creation of the task."
+                      },
+                      "task_id": {
+                        "type": "string",
+                        "description": "A unique identifier assigned to the created task."
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Error response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "message": {
+                        "type": "string",
+                        "description": "An error message explaining the cause of the failure."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "security": [
+            {
+              "x-api-key": []
+            }
+          ]
+        }
+      },
+      "/getTaskResult": {
+        "get": {
+          "tags": ["Generate"],
+          "summary": "Retrieve the result of a specific task",
+          "description": "Retrieves the result of a specific task based on the provided task ID. Use the task ID obtained from the 'createTask' endpoint to retrieve the generated product images. The result will be returned as an array of strings.",
+          "parameters": [
+            {
+              "name": "task_id",
+              "in": "query",
+              "schema": {
+                "type": "string"
+              },
+              "required": true,
+              "description": "The identifier of the task for which you want to retrieve the result."
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Error response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "message": {
+                        "type": "string",
+                        "description": "An error message explaining the cause of the failure."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "security": [
+            {
+              "x-api-key": []
+            }
+          ]
+        }
+      }
+    },
+    "components": {
+      "securitySchemes": {
+        "x-api-key": {
+          "type": "apiKey",
+          "name": "x-api-key",
+          "in": "header",
+          "description": "API key for authentication"
+        }
+      }
+    }
+  }
+  
